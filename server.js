@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
+const { parseDBError } = require('./app/util/utility');
 
 const app = express();
 
@@ -8,6 +9,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
+  next();
+});
 
 // Add session middleware
 app.use(
@@ -22,17 +28,26 @@ app.use(
 );
 
 // database
+// Database sync
 const db = require('./app/models');
 
-db.sequelize.sync();
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log('Synced db.');
+  })
+  .catch((err) => {
+    const errData = parseDBError(err);
+    console.log('Failed to sync db: ' + errData.message);
+  });
 
 // simple route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to online market place application.' });
 });
 
-// routes
-require('./app/routes/auth.routes')(app);
+//routing
+app.use('/', require('./app/routes'));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

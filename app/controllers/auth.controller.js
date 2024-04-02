@@ -1,6 +1,7 @@
 const db = require('../models');
 const config = require('../config/auth.config');
 const User = db.user;
+const Utils = require('../util/utility');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -16,8 +17,12 @@ exports.signup = async (req, res) => {
 
     if (user) res.send({ message: 'User registered successfully!' });
     else res.send({ message: 'User not registered something wrong!' });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
+  } catch (err) {
+    const errData = Utils.parseDBError(err);
+    console.error(err, 'Error caught');
+    return res
+      .status(errData.status)
+      .json(Utils.sendData(false, errData.message));
   }
 };
 
@@ -57,19 +62,28 @@ exports.signin = async (req, res) => {
       username: user.username,
       email: user.email,
     });
-  } catch (error) {
-    console.log('error in signin: ', error);
-    return res.status(500).send({ message: error.message });
+  } catch (err) {
+    const errData = Utils.parseDBError(err);
+    console.error(err, 'Error caught');
+    return res
+      .status(errData.status)
+      .json(Utils.sendData(false, errData.message));
   }
 };
 
 exports.signout = async (req, res) => {
   try {
-    req.session = null;
+    req.session.token = null;
+    console.log('token:================', req.session);
+    // console.log('token:================', req.session.token);
     return res.status(200).send({
       message: "You've been signed out!",
     });
   } catch (err) {
-    this.next(err);
+    const errData = Utils.parseDBError(err);
+    console.error(err, 'Error caught');
+    return res
+      .status(errData.status)
+      .json(Utils.sendData(false, errData.message));
   }
 };
