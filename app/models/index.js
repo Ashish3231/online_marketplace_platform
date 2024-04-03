@@ -26,14 +26,23 @@ db.orderLine = require('./order/order_line.model.js')(sequelize, Sequelize);
 db.user.hasMany(db.product, { as: 'user_prdct', foreignKey: 'user_id' });
 db.product.belongsTo(db.user, { as: 'user_prdct', foreignKey: 'user_id' });
 
-//product and order mapping
-db.product.hasMany(db.orderHeader, {
-  as: 'prdct_ord',
-  foreignKey: 'product_id',
+// user and order mapping
+db.user.hasMany(db.orderHeader, {
+  as: 'user_sell_order',
+  foreignKey: 'seller_id',
 });
-db.orderHeader.belongsTo(db.product, {
-  as: 'prdct_ord',
-  foreignKey: 'product_id',
+db.orderHeader.belongsTo(db.user, {
+  as: 'user_sell_order',
+  foreignKey: 'seller_id',
+});
+
+db.user.hasMany(db.orderHeader, {
+  as: 'user_buyer_order',
+  foreignKey: 'buyer_id',
+});
+db.orderHeader.belongsTo(db.user, {
+  as: 'user_buyer_order',
+  foreignKey: 'buyer_id',
 });
 
 // order header and order line mapping

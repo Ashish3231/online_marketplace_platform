@@ -10,17 +10,17 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      // ord_no: {
-      //   type: Sequelize.STRING(100), // Order Number
-      //   allowNull: false,
-      //   unique: {
-      //     args: true,
-      //     msg: 'Order number already exists',
-      //   },
-      // },
       ord_dt: {
         type: Sequelize.DATE, // Order Date
         defaultValue: NOW,
+      },
+      buyer_id: {
+        type: Sequelize.BIGINT, // buyer user id
+        allowNull: false,
+      },
+      seller_id: {
+        type: Sequelize.BIGINT, // seller user id
+        allowNull: false,
       },
       status: {
         type: Sequelize.STRING(3), //CRE, REJ, ACC

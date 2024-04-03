@@ -22,6 +22,9 @@ module.exports = (sequelize, Sequelize) => {
       qty: {
         type: Sequelize.BIGINT, //
       },
+      amt: {
+        type: Sequelize.DOUBLE, // total amount
+      },
       cre_on: {
         type: Sequelize.DATE, // Created Date
         defaultValue: NOW,
