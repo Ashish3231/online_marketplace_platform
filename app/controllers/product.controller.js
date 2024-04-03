@@ -5,27 +5,18 @@ const Utils = require('../util/utility');
 
 exports.createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      state,
-      total_amount,
-      available_qty,
-      user_id,
-      cre_by,
-      upd_by,
-    } = req.body;
+    const file = req.files;
+    console.log(file);
+    if (!file.length) {
+      return res
+        .status(400)
+        .json(Utils.sendData(false, 'content can not be empty'));
+    }
+    const data = JSON.parse(req.body.product);
+    console.log('data: ', data);
 
     // Create a new product in the database
-    const newProduct = await Product.create({
-      name,
-      state,
-      total_amount,
-      available_qty,
-      user_id,
-      cre_by,
-      upd_by,
-      // Additional fields like cre_by, cre_on, upd_by, upd_on will be automatically filled by Sequelize
-    });
+    const newProduct = await Product.create(data);
 
     // Send back the newly created product as response
     return res
@@ -45,8 +36,6 @@ exports.createProduct = async (req, res) => {
 exports.findAll = async (req, res) => {
   try {
     const products = await Product.findAll();
-    console.log('token:================', req.session);
-    console.log('token:================', req.session.token);
     return res.status(201).json(Utils.sendData(true, 'Data  Found', products));
   } catch (err) {
     const errData = Utils.parseDBError(err);
@@ -82,10 +71,15 @@ exports.update = async (req, res) => {
     if (product === null) {
       res.status(404).json({ message: 'Product not found' });
     } else {
-      const updatedProduct = await product.update({
-        ...req.body,
-        upd_on: new Date(), // Update the upd_on field to the current date/time
-      });
+      const file = req.files;
+      console.log(file);
+      if (!file.length) {
+        return res
+          .status(400)
+          .json(Utils.sendData(false, 'content can not be empty'));
+      }
+      const data = JSON.parse(req.body.product);
+      const updatedProduct = await product.update(data);
       return res
         .status(201)
         .json(Utils.sendData(true, 'Data  Found', updatedProduct));
