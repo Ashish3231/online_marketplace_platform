@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const { parseDBError } = require('./app/util/utility');
+const LOGGER = require('./app/services/loggerService');
+const subcriber = require('./app/services/rabbitMQ/subscriber');
 
 const app = express();
 
@@ -49,8 +51,11 @@ app.get('/', (req, res) => {
 //routing
 app.use('/', require('./app/routes'));
 
+subcriber.receiveNotification().catch(console.error);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
+  LOGGER.log('Server.js', 'listen', PORT);
   console.log(`Server is running on port ${PORT}.`);
 });

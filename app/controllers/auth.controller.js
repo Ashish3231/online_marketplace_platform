@@ -2,7 +2,7 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const User = db.user;
 const Utils = require('../util/utility');
-
+const LOGGER = require('../services/loggerService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -56,7 +56,7 @@ exports.signin = async (req, res) => {
     });
 
     req.session.token = token;
-
+    LOGGER.log('auth.controller.js', 'signin', 'Login in');
     return res.status(200).send({
       id: user.id,
       username: user.username,

@@ -3,16 +3,25 @@ const OrderHeader = db.orderHeader;
 const OrderLine = db.orderLine;
 const Sequelize = require('sequelize');
 const Utils = require('../util/utility');
+const publisher = require('../services/rabbitMQ/publisher');
 
 exports.orderCreate = async (req, res) => {
   try {
     const data = req.body;
+    const userId = req.userId;
+    console.log('userId==================', userId);
     const newOrder = await OrderHeader.create(data, {
       include: {
         model: OrderLine,
         as: 'item',
       },
     });
+    publisher
+      .sendNotification(
+        `user_${userId}`,
+        `order create with order id ${data.id}`,
+      )
+      .catch(console.error);
     return res
       .status(201)
       .json(Utils.sendData(true, 'Data Added succesfully', newOrder));
@@ -91,8 +100,10 @@ exports.orderFindOne = async (req, res) => {
 // findAll API
 exports.orderFindAll = async (req, res) => {
   try {
+    const userId = req.userId;
     const orders = await OrderHeader.findAll({
-      include: [{ model: OrderLine, as: 'item' }],
+      include: { model: OrderLine, as: 'item' },
+      // where: { id: userId },
     });
 
     if (!orders || orders.length === 0) {
