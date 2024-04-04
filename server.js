@@ -3,7 +3,7 @@ const cors = require('cors');
 const session = require('express-session');
 const { parseDBError } = require('./app/util/utility');
 const LOGGER = require('./app/services/loggerService');
-const subcriber = require('./app/services/rabbitMQ/subscriber');
+const rabbitServer = require('./app/services/rabbitMQ/rabbitServer');
 
 const app = express();
 
@@ -51,7 +51,8 @@ app.get('/', (req, res) => {
 //routing
 app.use('/', require('./app/routes'));
 
-subcriber.receiveNotification().catch(console.error);
+// subcriber.receiveNotification().catch(console.error);
+rabbitServer.connect();
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

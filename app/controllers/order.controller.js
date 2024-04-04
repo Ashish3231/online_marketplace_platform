@@ -3,7 +3,7 @@ const OrderHeader = db.orderHeader;
 const OrderLine = db.orderLine;
 const Sequelize = require('sequelize');
 const Utils = require('../util/utility');
-const publisher = require('../services/rabbitMQ/publisher');
+const rabbitMQ = require('../services/rabbitMQ/rabbitServer');
 
 exports.orderCreate = async (req, res) => {
   try {
@@ -16,12 +16,7 @@ exports.orderCreate = async (req, res) => {
         as: 'item',
       },
     });
-    publisher
-      .sendNotification(
-        `user_${userId}`,
-        `order create with order id ${data.id}`,
-      )
-      .catch(console.error);
+    rabbitMQ.sendOrder(newOrder, 'orders');
     return res
       .status(201)
       .json(Utils.sendData(true, 'Data Added succesfully', newOrder));
