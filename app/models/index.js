@@ -37,11 +37,11 @@ db.orderHeader.belongsTo(db.user, {
 });
 
 db.user.hasMany(db.orderHeader, {
-  as: 'user_buyer_order',
+  as: 'user_buy_order',
   foreignKey: 'buyer_id',
 });
 db.orderHeader.belongsTo(db.user, {
-  as: 'user_buyer_order',
+  as: 'user_buy_order',
   foreignKey: 'buyer_id',
 });
 
