@@ -20,6 +20,7 @@ exports.signup = async (req, res) => {
   } catch (err) {
     const errData = Utils.parseDBError(err);
     console.error(err, 'Error caught');
+    LOGGER.log('auth.controller.js', 'signup', errData.message);
     return res
       .status(errData.status)
       .json(Utils.sendData(false, errData.message));
@@ -65,6 +66,7 @@ exports.signin = async (req, res) => {
   } catch (err) {
     const errData = Utils.parseDBError(err);
     console.error(err, 'Error caught');
+    LOGGER.log('auth.controller.js', 'signin', errData.message);
     return res
       .status(errData.status)
       .json(Utils.sendData(false, errData.message));
@@ -75,13 +77,13 @@ exports.signout = async (req, res) => {
   try {
     req.session.token = null;
     console.log('token:================', req.session);
-    // console.log('token:================', req.session.token);
     return res.status(200).send({
       message: "You've been signed out!",
     });
   } catch (err) {
     const errData = Utils.parseDBError(err);
     console.error(err, 'Error caught');
+    LOGGER.log('auth.controller.js', 'signout', errData.message);
     return res
       .status(errData.status)
       .json(Utils.sendData(false, errData.message));

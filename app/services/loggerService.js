@@ -19,6 +19,11 @@ logger.setLevel(logsConfig.LOG_LEVEL);
  */
 exports.log = (fileName, methodName, msg, consoleEnable) => {
   const msgBody = `File: ${fileName}, Method: ${methodName}, Message: ${msg}`;
+  console.log(logsConfig.MARKETPLACE_LOG_DIR_PATH);
+  console.log(
+    'LOG_LEVEL======================================',
+    logsConfig.LOG_LEVEL,
+  );
   switch (logsConfig.LOG_LEVEL) {
     case 'debug':
       logger.debug(msgBody);
